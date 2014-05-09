@@ -18,6 +18,9 @@ function schemaTypeHasUniqueIndex(schemaType) {
 function buildUniqueValidator(path) {
     return function (value, respond) {
         var model = this.model(this.constructor.modelName);
+        if (!value && model.schema.paths[path]._index.sparse) {
+          return respond(true);
+        }
         var query = buildQuery(path, value, this._id);
         var callback = buildValidationCallback(respond);
         model.findOne(query, callback);
